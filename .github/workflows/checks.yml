@@ -1,4 +1,4 @@
-name: Django DRF CI (SQLite)
+name: Checks Test
 
 on:
   push:
