@@ -12,9 +12,11 @@ from tasks.models import Task
 class UserTaskView(generics.ListAPIView):
     serializer_class = TaskSerializers
     permission_classes = [IsAuthenticated]
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['status', 'priority']
     search_fields = ['title', 'description']
+    ordering_fields = ['title', 'description', 'created_at', 'updated_at']
+    ordering = ['created_at']
 
 
 
