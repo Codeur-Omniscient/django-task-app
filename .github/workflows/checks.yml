@@ -25,8 +25,7 @@ jobs:
 
       - name: 🧪 Run tests inside Docker
         run: |
-          docker run --rm temp-test-image sh -c "python manage.py test --verbosity=2"
-
+          docker run --rm temp-test-image sh -c "python manage.py migrate --noinput && python manage.py test --verbosity=2"
 
   build-and-push:
     runs-on: ubuntu-latest
