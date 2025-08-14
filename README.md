@@ -1,11 +1,11 @@
-# 📝 Django REST Framework - Todo API
+# Django REST Framework - Todo API
 
 Une API RESTful développée avec **Django REST Framework (DRF)** dans le but de mettre en pratique les concepts appris sur le framework.  
 Cette application gère des tâches (todo) avec un système complet d'authentification, de permissions et de filtrage.
 
 ---
 
-## 🚀 Fonctionnalités
+## Fonctionnalités
 
 - **Authentification par Token** (`rest_framework.authtoken`)
 - **Permissions personnalisées** (accès restreint par utilisateur)
@@ -16,7 +16,7 @@ Cette application gère des tâches (todo) avec un système complet d'authentifi
 
 ---
 
-## 🛠️ Technologies utilisées
+## Technologies utilisées
 
 - **Python 3.11+**
 - **Django 5+**
@@ -26,7 +26,7 @@ Cette application gère des tâches (todo) avec un système complet d'authentifi
 
 ---
 
-## 📦 Installation et exécution
+## Installation et exécution
 
 ### 1️⃣ Cloner le projet
 
@@ -70,7 +70,7 @@ python manage.py runserver
 
 ---
 
-## 🔑 Authentification par Token
+## Authentification par Token
 
 1. Crée un compte via `/admin` ou via une requête API.
 2. Récupère un **token** en envoyant une requête POST à :
@@ -92,7 +92,7 @@ Authorization: Token <votre_token>
 
 ---
 
-## 🔍 Points d’API principaux
+## EndPoints principaux
 
 | Méthode | Endpoint         | Description                   | Auth Requise |
 | ------- | ---------------- | ----------------------------- | ------------ |
@@ -112,14 +112,10 @@ Authorization: Token <votre_token>
 
 ---
 
-## 🧪 Lancer les tests
+## Lancer les tests
 
 ```bash
 python manage.py test
 ```
 
 ---
-
-## 📜 Licence
-
-Ce projet est open-source et disponible sous la licence MIT.
