@@ -1,4 +1,4 @@
-name: Checks Test
+name: Build & Push
 
 on:
   push:
@@ -6,29 +6,108 @@ on:
   pull_request:
     branches: ["develop"]
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
 jobs:
   test:
+    name: 🧪 Test inside Docker
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: 📥 Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: 🐳 Build Docker image for tests
+        run: |
+          docker build -t temp-test-image -f Dockerfile .
+
+      - name: 🧪 Run tests inside Docker
+        run: |
+          docker run --rm temp-test-image sh -c "python manage.py test --verbosity=2"
+
+
+  build-and-push:
+    runs-on: ubuntu-latest
+    needs: test  # exécute seulement si le test passe
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐳 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 🔐 Log in to Container Registry
+        uses: docker/login-action@v3
         with:
-          python-version: "3.11"
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install dependencies
+      - name: 📋 Generate tags
+        id: tags
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          TAGS="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:MyApp"
+          echo "tags=$TAGS" >> $GITHUB_OUTPUT
 
-      - name: Run migrations
-        run: |
-          python manage.py makemigrations --noinput
-          python manage.py migrate --noinput
+      - name: 🏗️ Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.tags.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-      - name: Run tests
+      - name: 📝 Output image info
         run: |
-          python manage.py test
+          echo "🐳 Image construite et poussée :"
+          echo "Registry: ${{ env.REGISTRY }}"
+          echo "Repository: ${{ env.IMAGE_NAME }}"
+          echo "Tags: ${{ steps.tags.outputs.tags }}"
+
+
+
+
+
+# name: Checks Test
+
+# on:
+#   push:
+#     branches: ["develop"]
+#   pull_request:
+#     branches: ["develop"]
+
+# jobs:
+#   test:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
+
+#       - name: Set up Python
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: "3.11"
+
+#       - name: Install dependencies
+#         run: |
+#           python -m pip install --upgrade pip
+#           pip install -r requirements.txt
+
+#       - name: Run migrations
+#         run: |
+#           python manage.py makemigrations --noinput
+#           python manage.py migrate --noinput
+
+#       - name: Run tests
+#         run: |
+#           python manage.py test
